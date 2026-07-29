@@ -6,6 +6,7 @@ import { registerSW } from "../utils/register-sw";
 let scramjetPromise = null;
 let scramjetController = null;
 let baremuxConnection = null;
+let tabIdCounter = 1;
 
 function timeout(ms) {
   return new Promise((_, reject) =>
@@ -24,9 +25,7 @@ async function clearScramjetDB() {
         req.onblocked = resolve;
       });
     }
-  } catch {
-    // indexedDB.databases() not supported
-  }
+  } catch {}
 }
 
 async function getScramjet() {
@@ -72,15 +71,17 @@ async function ensureTransport() {
 
 export default function Browser({ win }) {
   const settings = useStore((s) => s.settings);
-  const updateWindow = useStore((s) => s.updateWindow);
   const setNowPlaying = useStore((s) => s.setNowPlaying);
-  const iframeRef = useRef(null);
-  const frameRef = useRef(null);
-  const [url, setUrl] = useState(win.url || "");
-  const [inputValue, setInputValue] = useState(win.url || "");
-  const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
-  const initRef = useRef({ done: false, navigated: false });
+  const [tabs, setTabs] = useState(() => [
+    { id: `tab-${tabIdCounter++}`, url: win.url || "", title: "New Tab" },
+  ]);
+  const [activeTabId, setActiveTabId] = useState(tabs[0].id);
+  const initRef = useRef({ done: false });
+  const framesRef = useRef({});
+  const containersRef = useRef({});
+  const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
+  const [inputValue, setInputValue] = useState(activeTab?.url || "");
 
   useEffect(() => {
     if (initRef.current.done) return;
@@ -117,47 +118,52 @@ export default function Browser({ win }) {
     })();
   }, []);
 
+  const updateTab = (id, patch) => {
+    setTabs((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  };
+
   const navigate = useCallback(
     async (input) => {
       const targetUrl = search(input, settings.searchEngine);
-      setUrl(targetUrl);
+      const id = activeTabId;
+      updateTab(id, { url: targetUrl, title: "Loading..." });
       setInputValue(targetUrl);
-      setLoading(true);
       try {
         await Promise.race([ensureTransport(), timeout(8000)]);
-        if (!frameRef.current) {
-          const frame = scramjetController.createFrame();
+        let frame = framesRef.current[id];
+        if (!frame) {
+          frame = scramjetController.createFrame();
           frame.frame.style.cssText =
             "width:100%;height:100%;border:none;background:white;display:block;";
-          if (iframeRef.current) {
-            iframeRef.current.innerHTML = "";
-            iframeRef.current.appendChild(frame.frame);
-          }
-          if (frameRef.current && frameRef.current.urlchangeCleanup) {
-            frameRef.current.urlchangeCleanup();
+          const container = containersRef.current[id];
+          if (container) {
+            container.innerHTML = "";
+            container.appendChild(frame.frame);
           }
           const onUrlChange = (e) => {
-            setUrl(e.url);
             setInputValue(e.url);
+            updateTab(id, { url: e.url });
           };
           frame.addEventListener("urlchange", onUrlChange);
-          frame.urlchangeCleanup = () => {
-            frame.removeEventListener("urlchange", onUrlChange);
-          };
-          frameRef.current = frame;
+          frame._cleanup = () => frame.removeEventListener("urlchange", onUrlChange);
+          framesRef.current[id] = frame;
+          frame._pendingNav = null;
         }
-        frameRef.current.go(targetUrl);
+        frame._pendingNav = targetUrl;
+        frame.go(targetUrl);
       } catch (e) {
         console.error("Navigation error:", e);
-        if (iframeRef.current) {
-          iframeRef.current.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,0.5);font-size:14px;">Failed to load: ${e.message}</div>`;
-          frameRef.current = null;
+        const container = containersRef.current[id];
+        if (container) {
+          container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,0.5);font-size:14px;">Failed to load: ${e.message}</div>`;
+          if (framesRef.current[id]) {
+            framesRef.current[id]._cleanup?.();
+            delete framesRef.current[id];
+          }
         }
-      } finally {
-        setLoading(false);
       }
     },
-    [settings.searchEngine]
+    [settings.searchEngine, activeTabId]
   );
 
   useEffect(() => {
@@ -174,7 +180,8 @@ export default function Browser({ win }) {
     if (!ready) return;
     audioCheckRef.current = setInterval(() => {
       try {
-        const iframe = iframeRef.current?.querySelector("iframe");
+        const container = containersRef.current[activeTabId];
+        const iframe = container?.querySelector("iframe");
         const doc = iframe?.contentWindow?.document;
         if (!doc) { setNowPlaying(null); lastMedia.current = null; return; }
         const allMedia = [...doc.querySelectorAll("audio,video")].filter(
@@ -188,7 +195,38 @@ export default function Browser({ win }) {
       } catch { setNowPlaying(null); lastMedia.current = null; }
     }, 500);
     return () => { clearInterval(audioCheckRef.current); audioCheckRef.current = null; };
-  }, [ready, setNowPlaying]);
+  }, [ready, setNowPlaying, activeTabId]);
+
+  const switchTab = (id) => {
+    setActiveTabId(id);
+    const tab = tabs.find((t) => t.id === id);
+    if (tab) setInputValue(tab.url);
+  };
+
+  const addTab = () => {
+    const id = `tab-${tabIdCounter++}`;
+    setTabs((prev) => [...prev, { id, url: "", title: "New Tab" }]);
+    setActiveTabId(id);
+    setInputValue("");
+  };
+
+  const closeTab = (id) => {
+    if (tabs.length <= 1) return;
+    framesRef.current[id]?._cleanup?.();
+    delete framesRef.current[id];
+    const container = containersRef.current[id];
+    if (container) container.innerHTML = "";
+    setTabs((prev) => {
+      const next = prev.filter((t) => t.id !== id);
+      if (activeTabId === id) {
+        const idx = prev.findIndex((t) => t.id === id);
+        const newActive = next[Math.min(idx, next.length - 1)];
+        setInputValue(newActive.url);
+        setActiveTabId(newActive.id);
+      }
+      return next;
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -211,13 +249,110 @@ export default function Browser({ win }) {
         background: "rgba(0,0,0,0.3)",
       }}
     >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0,
+          padding: "4px 4px 0",
+          background: "rgba(0,0,0,0.15)",
+          flexShrink: 0,
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ display: "flex", flex: 1, gap: 2, overflow: "hidden" }}>
+          {tabs.map((tab) => (
+            <div
+              key={tab.id}
+              onClick={() => switchTab(tab.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "5px 8px",
+                cursor: "pointer",
+                borderRadius: "6px 6px 0 0",
+                background: tab.id === activeTabId ? "rgba(0,0,0,0.25)" : "transparent",
+                borderBottom: tab.id === activeTabId ? "2px solid var(--accent)" : "2px solid transparent",
+                minWidth: 0,
+                flex: "0 1 160px",
+                transition: "background 0.15s",
+                fontFamily: "var(--font)",
+                fontSize: 11,
+                color: tab.id === activeTabId ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.4)",
+              }}
+              onMouseEnter={(e) => {
+                if (tab.id !== activeTabId)
+                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+              }}
+              onMouseLeave={(e) => {
+                if (tab.id !== activeTabId)
+                  e.currentTarget.style.background = "transparent";
+              }}
+            >
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
+                {tab.title === "Loading..." ? (
+                  <span style={{ fontStyle: "italic", opacity: 0.5 }}>Loading...</span>
+                ) : (
+                  tab.title || tab.url || "New Tab"
+                )}
+              </span>
+              {tabs.length > 1 && (
+                <span
+                  onClick={(e) => { e.stopPropagation(); closeTab(tab.id); }}
+                  style={{
+                    fontSize: 12,
+                    lineHeight: 1,
+                    opacity: 0.3,
+                    padding: "0 2px",
+                    borderRadius: 3,
+                    transition: "opacity 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = "0.8";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = "0.3";
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  &times;
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={addTab}
+          title="New Tab"
+          style={{
+            background: "none",
+            border: "none",
+            color: "rgba(255,255,255,0.4)",
+            cursor: "pointer",
+            padding: "4px 8px",
+            fontSize: 16,
+            lineHeight: 1,
+            borderRadius: 4,
+            flexShrink: 0,
+            fontFamily: "var(--font)",
+            transition: "background 0.15s",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
+        >
+          +
+        </button>
+      </div>
+
       <form
         onSubmit={handleSubmit}
         style={{
           display: "flex",
           alignItems: "center",
           gap: 6,
-          padding: "6px 10px",
+          padding: "4px 10px",
           background: "rgba(0,0,0,0.2)",
           borderBottom: "1px solid rgba(255,255,255,0.04)",
           flexShrink: 0,
@@ -225,8 +360,7 @@ export default function Browser({ win }) {
       >
         <button
           type="button"
-          onClick={() => navigate(url)}
-          disabled={loading}
+          onClick={() => navigate(inputValue)}
           style={{
             background: "none",
             border: "none",
@@ -238,12 +372,8 @@ export default function Browser({ win }) {
             fontSize: 14,
             fontFamily: "var(--font)",
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.background = "rgba(255,255,255,0.06)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "none")
-          }
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z" />
@@ -267,49 +397,34 @@ export default function Browser({ win }) {
             outline: "none",
             fontFamily: "var(--font)",
           }}
-          onFocus={(e) =>
-            (e.currentTarget.style.border = "1px solid rgba(0,122,255,0.4)")
-          }
-          onBlur={(e) =>
-            (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.06)")
-          }
+          onFocus={(e) => (e.currentTarget.style.border = "1px solid rgba(0,122,255,0.4)")}
+          onBlur={(e) => (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.06)")}
         />
-        {loading && (
-          <div
-            style={{
-              width: 14,
-              height: 14,
-              border: "2px solid rgba(255,255,255,0.1)",
-              borderTopColor: "#007aff",
-              borderRadius: "50%",
-              animation: "spin 0.6s linear infinite",
-              flexShrink: 0,
-            }}
-          />
-        )}
       </form>
-      <div
-        ref={iframeRef}
-        style={{
-          flex: 1,
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
+
+      <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
         {!ready && (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              color: "rgba(255,255,255,0.3)",
-              fontSize: 13,
+              position: "absolute", inset: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "rgba(255,255,255,0.3)", fontSize: 13,
+              background: "rgba(0,0,0,0.3)",
             }}
           >
             Initializing proxy...
           </div>
         )}
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            ref={(el) => { containersRef.current[tab.id] = el; }}
+            style={{
+              position: "absolute", inset: 0,
+              display: tab.id === activeTabId ? "block" : "none",
+            }}
+          />
+        ))}
       </div>
     </div>
   );
