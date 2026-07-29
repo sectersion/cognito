@@ -1,0 +1,45 @@
+{
+  "name": "cognito-proxy",
+  "version": "1.0.0",
+  "description": "Web proxy built on Scramjet technology",
+  "type": "module",
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "start": "npm run build:frontend && node src/index.js",
+    "dev": "nodemon src/index.js --watch src --watch public",
+    "dev:frontend": "vite",
+    "dev:all": "concurrently -n be,fe -c yellow,cyan --delay 1000 \"npm run dev\" \"npm run dev:frontend\"",
+    "build:frontend": "vite build",
+    "format": "prettier --write .",
+    "lint": "eslint ./src/"
+  },
+  "keywords": [
+    "proxy"
+  ],
+  "author": "",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@fastify/static": "^9.0.0",
+    "@mercuryworkshop/bare-mux": "^2.1.9",
+    "@mercuryworkshop/libcurl-transport": "^1.5.2",
+    "@mercuryworkshop/scramjet": "https://github.com/MercuryWorkshop/scramjet/releases/download/v1.1.0/mercuryworkshop-scramjet-1.1.0.tgz",
+    "@mercuryworkshop/wisp-js": "^0.4.1",
+    "fastify": "^5.7.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
+    "ws": "^8.18.3",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^10.0.4",
+    "eslint": "^9.13.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.3.3",
+    "vite": "^6.3.5"
+  }
+}

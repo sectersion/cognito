@@ -1,0 +1,6 @@
+{
+  "name": "Cognito Proxy",
+  "description": "Web proxy built on Scramjet technology",
+  "repository": "https://github.com/your-username/cognito",
+  "keywords": ["scramjet", "proxy"]
+}

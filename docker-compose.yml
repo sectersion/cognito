@@ -1,0 +1,7 @@
+services:
+  scramjet:
+    build: .
+    container_name: scramjet
+    restart: unless-stopped
+    ports:
+      - "8080:8080"

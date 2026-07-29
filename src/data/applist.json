@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "id": "browser",
+      "name": "Browser",
+      "icon": "🌐",
+      "iconName": "compass",
+      "url": "https://www.google.com",
+      "type": "browser",
+      "description": "Browse the web freely"
+    },
+    {
+      "id": "settings",
+      "name": "Settings",
+      "icon": "⚙️",
+      "iconName": "settings",
+      "url": "",
+      "type": "internal",
+      "description": "System settings"
+    }
+  ]
+}
