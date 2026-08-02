@@ -49,29 +49,22 @@ function getScramjet() {
 }
 
 async function ensureTransport() {
-	console.log("[cognito-debug] Step 1: Registering service worker...");
 	try {
 		await registerSW();
-		console.log("[cognito-debug] Step 1: SW registered");
 	} catch (e) {
-		console.warn("[cognito-debug] SW registration failed:", e);
+		console.warn("SW registration failed:", e);
 	}
-	console.log("[cognito-debug] Step 2: Initializing Scramjet...");
 	const { connection } = await getScramjet();
-	console.log("[cognito-debug] Step 2: Scramjet initialized");
 	const wispUrl =
 		(location.protocol === "https:" ? "wss" : "ws") +
 		"://" +
 		location.host +
 		"/wisp/";
-	console.log("[cognito-debug] Step 3: Setting transport to", wispUrl);
 	const transport = await connection.getTransport();
-	console.log("[cognito-debug] Current transport:", transport);
 	if (transport !== "/libcurl/index.mjs") {
 		await connection.setTransport("/libcurl/index.mjs", [
 			{ websocket: wispUrl },
 		]);
-		console.log("[cognito-debug] Step 3: Transport set");
 	}
 }
 
@@ -86,7 +79,7 @@ export function useScramjet(setScramjetStatus) {
 			setScramjetStatus("connecting");
 			for (let attempt = 0; attempt < 3; attempt++) {
 				try {
-					await Promise.race([ensureTransport(), timeout(8000)]);
+					await Promise.race([ensureTransport(), timeout(30000)]);
 					setScramjetStatus("connected");
 					setReady(true);
 					return;
