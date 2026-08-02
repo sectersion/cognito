@@ -1,0 +1,78 @@
+export function createApp({
+	id,
+	name,
+	iconName,
+	url,
+	type = "browser",
+	description,
+	category = "Web",
+	keywords = [],
+}) {
+	return {
+		id,
+		name,
+		iconName,
+		url,
+		type,
+		description,
+		category,
+		keywords,
+	};
+}
+
+export const DEFAULT_APPS = [
+	createApp({
+		id: "browser",
+		name: "Safari",
+		iconName: "compass",
+		url: "https://www.google.com",
+		description: "Browse the web privately",
+		keywords: ["internet", "web", "search"],
+	}),
+	createApp({
+		id: "settings",
+		name: "Settings",
+		iconName: "preferences-system",
+		url: "",
+		type: "internal",
+		description: "System settings",
+		category: "System",
+	}),
+	createApp({
+		id: "steam",
+		name: "Steam",
+		iconName: "game-library",
+		url: "",
+		type: "internal",
+		description: "Browse and play your game library",
+		category: "Games",
+		keywords: ["games", "library", "arcade"],
+	}),
+	createApp({
+		id: "geforce-now",
+		name: "GeForce NOW",
+		iconName: "cloud-gaming",
+		url: "https://play.geforcenow.com",
+		type: "webapp",
+		description: "Stream games from the cloud",
+		keywords: ["gaming", "games", "cloud"],
+	}),
+	createApp({
+		id: "youtube",
+		name: "YouTube",
+		iconName: "youtube",
+		url: "https://www.youtube.com",
+		type: "webapp",
+		description: "Watch videos and live streams",
+		keywords: ["video", "music", "streaming"],
+	}),
+	createApp({
+		id: "discord",
+		name: "Discord",
+		iconName: "discord",
+		url: "https://discord.com/app",
+		type: "webapp",
+		description: "Chat with your communities",
+		keywords: ["chat", "community", "messaging"],
+	}),
+];

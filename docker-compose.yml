@@ -1,7 +1,9 @@
 services:
-  scramjet:
+  cognito:
     build: .
-    container_name: scramjet
+    container_name: cognito
     restart: unless-stopped
     ports:
       - "8080:8080"
+    environment:
+      - PORT=8080

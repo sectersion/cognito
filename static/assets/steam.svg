@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Steam">
+  <defs>
+    <linearGradient id="steam-bg" x1="72" y1="40" x2="430" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b9dcc" />
+      <stop offset="1" stop-color="#034d80" />
+    </linearGradient>
+    <radialGradient id="steam-glow" cx="0" cy="0" r="1" gradientTransform="translate(331 183) rotate(90) scale(83)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" />
+      <stop offset="1" stop-color="#c7e4f6" />
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="82" fill="url(#steam-bg)" />
+  <circle cx="330" cy="181" r="78" fill="url(#steam-glow)" stroke="#eaf7ff" stroke-width="13" />
+  <circle cx="330" cy="181" r="49" fill="#08618e" />
+  <circle cx="330" cy="181" r="34" fill="#fbfdff" />
+  <path d="M46 260 186 324l91-108 49-11-8 50-105 50-38 55-129-46z" fill="#f4fbff" />
+  <circle cx="176" cy="360" r="58" fill="#0a5e8c" stroke="#eaf7ff" stroke-width="12" />
+  <circle cx="176" cy="360" r="27" fill="#f8fcff" />
+</svg>

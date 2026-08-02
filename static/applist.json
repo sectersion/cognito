@@ -2,21 +2,63 @@
   "apps": [
     {
       "id": "browser",
-      "name": "Browser",
-      "icon": "🌐",
+      "name": "Safari",
       "iconName": "compass",
       "url": "https://www.google.com",
       "type": "browser",
-      "description": "Browse the web freely"
+      "description": "Browse the web privately",
+      "category": "Web",
+      "keywords": ["internet", "web", "search"]
     },
     {
       "id": "settings",
       "name": "Settings",
-      "icon": "⚙️",
-      "iconName": "settings",
+      "iconName": "preferences-system",
       "url": "",
       "type": "internal",
-      "description": "System settings"
+      "description": "System settings",
+      "category": "System",
+      "keywords": []
+    },
+    {
+      "id": "geforce-now",
+      "name": "GeForce NOW",
+      "iconName": "cloud-gaming",
+      "url": "https://play.geforcenow.com",
+      "type": "webapp",
+      "description": "Stream games from the cloud",
+      "category": "Web",
+      "keywords": ["gaming", "games", "cloud"]
+    },
+    {
+      "id": "steam",
+      "name": "Steam",
+      "iconName": "game-library",
+      "url": "",
+      "type": "internal",
+      "description": "Browse and play your game library",
+      "category": "Games",
+      "keywords": ["games", "library", "arcade"]
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "iconName": "youtube",
+      "url": "https://www.youtube.com",
+      "type": "webapp",
+      "description": "Watch videos and live streams",
+      "category": "Web",
+      "keywords": ["video", "music", "streaming"]
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "iconName": "discord",
+      "url": "https://discord.com/app",
+      "type": "webapp",
+      "description": "Chat with your communities",
+      "category": "Web",
+      "keywords": ["chat", "community", "messaging"]
     }
   ]
 }

@@ -14,7 +14,8 @@
     "dev:all": "concurrently -n be,fe -c yellow,cyan --delay 1000 \"npm run dev\" \"npm run dev:frontend\"",
     "build:frontend": "vite build",
     "format": "prettier --write .",
-    "lint": "eslint ./src/"
+    "lint": "eslint ./src/",
+    "prepare": "husky"
   },
   "keywords": [
     "proxy"
@@ -35,9 +36,15 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@eslint/js": "^9.13.0",
     "@vitejs/plugin-react": "^4.4.1",
     "concurrently": "^10.0.4",
     "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.11.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0",
     "nodemon": "^3.1.14",
     "prettier": "^3.3.3",
     "vite": "^6.3.5"

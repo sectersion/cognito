@@ -1,0 +1,379 @@
+.game-window {
+	width: 100%;
+	height: 100%;
+	background: #080b12;
+}
+
+.game-window iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background: #080b12;
+}
+
+.steam-library {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	min-width: 0;
+	color: #d6d7db;
+	background: #18202c;
+	font-family: var(--font);
+}
+
+.steam-sidebar {
+	display: flex;
+	width: 205px;
+	flex-shrink: 0;
+	flex-direction: column;
+	padding: 14px 10px;
+	background: linear-gradient(180deg, #1a202b, #151b25);
+	border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.steam-brand {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 3px 8px 16px;
+	color: #f3f4f6;
+	font-size: 15px;
+}
+
+.steam-search {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 8px;
+	background: rgba(0, 0, 0, 0.22);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 4px;
+}
+
+.steam-search span {
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 17px;
+}
+
+.steam-search input {
+	width: 100%;
+	min-width: 0;
+	color: #e7e9ed;
+	background: transparent;
+	border: 0;
+	outline: 0;
+	font: 11px var(--font);
+}
+
+.steam-sidebar-label {
+	padding: 22px 9px 7px;
+	color: rgba(255, 255, 255, 0.35);
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.steam-sidebar button {
+	padding: 8px 9px;
+	color: rgba(255, 255, 255, 0.56);
+	text-align: left;
+	background: transparent;
+	border: 0;
+	border-radius: 4px;
+	cursor: pointer;
+	font: 11px var(--font);
+}
+
+.steam-sidebar button:hover,
+.steam-sidebar button.active {
+	color: #fff;
+	background: linear-gradient(
+		90deg,
+		rgba(41, 133, 210, 0.75),
+		rgba(41, 133, 210, 0.2)
+	);
+}
+
+.steam-sidebar-footer {
+	margin-top: auto;
+	padding: 12px 9px 3px;
+	color: rgba(255, 255, 255, 0.28);
+	font-size: 10px;
+}
+
+.steam-main {
+	min-width: 0;
+	flex: 1;
+	overflow: auto;
+	background:
+		radial-gradient(
+			circle at 70% 0%,
+			rgba(39, 119, 177, 0.15),
+			transparent 38%
+		),
+		#202a38;
+}
+
+.steam-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 18px;
+	background: rgba(11, 15, 22, 0.32);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+}
+
+.steam-topbar div {
+	display: flex;
+	gap: 20px;
+}
+
+.steam-topbar strong {
+	color: #66c0f4;
+	border-bottom: 2px solid #66c0f4;
+}
+
+.steam-user {
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 10px;
+	font-weight: 400;
+	letter-spacing: 0;
+}
+
+.steam-hero {
+	display: flex;
+	gap: 24px;
+	min-height: 220px;
+	padding: 24px;
+	background: linear-gradient(110deg, #172f4a, #263241 58%, #1d2734);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.steam-hero-art {
+	display: flex;
+	width: 300px;
+	min-height: 170px;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	background: linear-gradient(145deg, #0d5d8c, #1b293e 60%, #050a13);
+	box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 90px;
+	font-weight: 700;
+}
+
+.steam-hero-art small {
+	position: absolute;
+	right: 12px;
+	bottom: 10px;
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 9px;
+	letter-spacing: 0.12em;
+}
+
+.steam-hero-art img,
+.steam-card-art img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.steam-hero-art img {
+	opacity: 0.88;
+}
+
+.steam-hero-copy {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.steam-kicker {
+	color: #66c0f4;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+}
+
+.steam-hero-copy h1 {
+	margin: 6px 0 8px;
+	color: #f5f7fa;
+	font-size: 28px;
+	letter-spacing: -0.7px;
+}
+
+.steam-hero-copy p {
+	max-width: 390px;
+	margin-bottom: 18px;
+	color: rgba(255, 255, 255, 0.55);
+	font-size: 12px;
+}
+
+.steam-play {
+	padding: 10px 22px;
+	color: #eaf6ff;
+	background: linear-gradient(180deg, #75c82c, #3b961d);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 3px;
+	box-shadow: 0 5px 16px rgba(22, 102, 27, 0.28);
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.steam-play:hover {
+	filter: brightness(1.12);
+}
+
+.steam-section-heading {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	padding: 22px 24px 12px;
+}
+
+.steam-section-heading h2 {
+	color: #f0f2f5;
+	font-size: 17px;
+	font-weight: 500;
+}
+
+.steam-section-heading span {
+	color: rgba(255, 255, 255, 0.36);
+	font-size: 10px;
+}
+
+.steam-game-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+	gap: 14px;
+	padding: 0 24px 24px;
+}
+
+.steam-game-card {
+	min-width: 0;
+	padding: 0 0 9px;
+	color: rgba(255, 255, 255, 0.72);
+	text-align: left;
+	background: rgba(11, 16, 25, 0.35);
+	border: 1px solid transparent;
+	border-radius: 3px;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.steam-game-card:hover,
+.steam-game-card.selected {
+	color: #fff;
+	background: rgba(57, 117, 164, 0.32);
+	border-color: rgba(102, 192, 244, 0.8);
+}
+
+.steam-card-art {
+	display: grid;
+	height: 82px;
+	place-items: center;
+	margin-bottom: 7px;
+	background: linear-gradient(135deg, #1b6a9a, #1a263d 62%, #101622);
+	color: rgba(255, 255, 255, 0.82);
+	font-size: 34px;
+	font-weight: 700;
+}
+
+.steam-game-card strong,
+.steam-game-card small {
+	display: block;
+	padding: 0 9px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.steam-empty {
+	grid-column: 1 / -1;
+	padding: 36px 16px;
+	color: rgba(255, 255, 255, 0.5);
+	text-align: center;
+	font-size: 12px;
+}
+
+.steam-empty button {
+	margin-left: 8px;
+	padding: 5px 9px;
+	color: #fff;
+	background: rgba(102, 192, 244, 0.2);
+	border: 1px solid rgba(102, 192, 244, 0.5);
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 11px;
+}
+
+.steam-game-card strong {
+	font-size: 11px;
+	font-weight: 500;
+}
+
+.steam-game-card small {
+	margin-top: 3px;
+	color: rgba(255, 255, 255, 0.36);
+	font-size: 9px;
+}
+
+@media (max-width: 700px) {
+	.steam-sidebar {
+		width: 150px;
+	}
+	.steam-hero {
+		gap: 14px;
+		padding: 16px;
+	}
+	.steam-hero-art {
+		width: 180px;
+	}
+}
+
+@media (max-width: 480px) {
+	.window-shell {
+		max-width: 100vw;
+		max-height: calc(100vh - var(--menubar-height));
+	}
+	.steam-library {
+		flex-direction: column;
+	}
+	.steam-sidebar {
+		width: 100%;
+		padding: 10px;
+	}
+	.steam-brand {
+		padding-bottom: 9px;
+	}
+	.steam-sidebar-label,
+	.steam-sidebar-footer {
+		display: none;
+	}
+	.steam-sidebar button {
+		display: inline-block;
+		width: auto;
+		margin: 5px 2px 0 0;
+	}
+	.steam-hero {
+		flex-direction: column;
+	}
+	.steam-hero-art {
+		width: 100%;
+		min-height: 130px;
+	}
+	.steam-game-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding: 0 14px 18px;
+	}
+}
