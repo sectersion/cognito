@@ -20,7 +20,7 @@
   "keywords": [
     "proxy"
   ],
-  "author": "",
+  "author": "sectersion",
   "license": "AGPL-3.0",
   "dependencies": {
     "@fastify/static": "^9.0.0",
