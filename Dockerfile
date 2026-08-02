@@ -4,10 +4,11 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN apk add --no-cache python3 make g++
-RUN npm ci --omit=dev
+RUN npm ci --ignore-scripts
 
 COPY . .
 RUN npm run build:frontend
+RUN rm -rf node_modules && npm ci --omit=dev --ignore-scripts
 
 FROM node:20-alpine
 
